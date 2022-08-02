@@ -1,0 +1,86 @@
+{
+  "generator-jhipster": {
+    "additionalSubGenerators": "",
+    "baseName": "yugabytedb",
+    "cli": false,
+    "generators": {
+      "app": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "composing",
+          "loading",
+          "preparing",
+          "default",
+          "writing",
+          "postWriting",
+          "install",
+          "end"
+        ],
+        "sbs": false,
+        "written": true
+      },
+      "kubernetes": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "composing",
+          "loading",
+          "preparing",
+          "default",
+          "writing",
+          "postWriting",
+          "install",
+          "end"
+        ],
+        "sbs": false,
+        "written": true
+      },
+      "kubernetes-helm": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "composing",
+          "loading",
+          "preparing",
+          "default",
+          "writing",
+          "postWriting",
+          "install",
+          "end"
+        ],
+        "sbs": false,
+        "written": true
+      },
+      "server": {
+        "command": false,
+        "priorities": [
+          "initializing",
+          "prompting",
+          "configuring",
+          "composing",
+          "loading",
+          "preparing",
+          "default",
+          "writing",
+          "postWriting",
+          "install",
+          "end"
+        ],
+        "sbs": false,
+        "written": true
+      }
+    },
+    "jhipsterVersion": "7.9.0",
+    "prettierDefaultIndent": 2,
+    "projectName": "YugabyteDB",
+    "skipCommitHook": true,
+    "subGenerators": ["app", "kubernetes", "kubernetes-helm", "server"]
+  }
+}
