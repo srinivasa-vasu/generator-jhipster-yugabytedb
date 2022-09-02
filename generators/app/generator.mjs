@@ -78,14 +78,7 @@ export default class extends AppGenerator {
   get [WRITING_PRIORITY]() {
     return {
       ...super._writing(),
-      async writingTemplateTask() {
-        await this.writeFiles({
-          sections: {
-            files: [{ templates: ['template-file-app'] }],
-          },
-          context: this,
-        });
-      },
+      async writingTemplateTask() {},
     };
   }
 

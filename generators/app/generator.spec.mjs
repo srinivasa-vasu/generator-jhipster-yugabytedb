@@ -1,11 +1,12 @@
-import expect from 'expect';
+import prom from 'expect';
 
 import { helpers, lookups } from '#test-utils';
 
 const SUB_GENERATOR = 'app';
 const BLUEPRINT_NAMESPACE = `jhipster:${SUB_GENERATOR}`;
+const { expect } = prom;
 
-describe('SubGenerator app of yugabytedb JHipster blueprint', () => {
+describe('SubGenerator app of YugabyteDB JHipster blueprint', () => {
   describe('run', () => {
     let result;
     before(async function () {

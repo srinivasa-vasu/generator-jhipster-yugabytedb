@@ -1,4 +1,6 @@
 import chalk from 'chalk';
+import { writeFiles } from './files.cjs';
+import { askForModuleName, askForServerSideOpts, askForOptionalItems } from './prompts.cjs';
 import ServerGenerator from 'generator-jhipster/esm/generators/server';
 import {
   PRIORITY_PREFIX,
@@ -14,6 +16,11 @@ import {
   INSTALL_PRIORITY,
   END_PRIORITY,
 } from 'generator-jhipster/esm/priorities';
+import { constants, Types } from '../constants.cjs';
+import util from '../utils.cjs';
+
+const { getDBCUrl } = util;
+const { POSTGRESQL, CASSANDRA, YSQL, YCQL, SQL } = Types;
 
 export default class extends ServerGenerator {
   constructor(args, opts, features) {
@@ -24,89 +31,113 @@ export default class extends ServerGenerator {
     if (!this.options.jhipsterContext) {
       throw new Error(`This is a JHipster blueprint and should be used only like ${chalk.yellow('jhipster --blueprints yugabytedb')}`);
     }
+    this.loadStoredAppOptions();
+    this.loadRuntimeOptions();
+  }
+
+  getJDBCUrl(databaseType, options = {}) {
+    return getDBCUrl(databaseType, 'jdbc', options);
+  }
+
+  getR2DBCUrl(databaseType, options = {}) {
+    return getDBCUrl(databaseType, 'r2dbc', options);
+  }
+
+  _initializing() {
+    return {
+      setupLocalServerConsts() {
+        this.DOCKER_YBDB = constants.DOCKER_YBDB;
+        this.YSQL_DRIVER_VERSION = constants.YSQL_DRIVER_VERSION;
+        this.YCQL_DRIVER_VERSION = constants.YCQL_DRIVER_VERSION;
+        this.YBDB_DRIVER = constants.YBDB_DRIVER;
+      },
+      initLocalProps() {
+        if (this.jhipsterConfig.dsqlType !== undefined) {
+          this.dsqlType = this.jhipsterConfig.dsqlType;
+        } else if (this.jhipsterConfig.prodDatabaseType === CASSANDRA) {
+          this.dsqlType = YCQL;
+        } else if (this.jhipsterConfig.prodDatabaseType === POSTGRESQL) {
+          this.dsqlType = YSQL;
+        } else {
+          // do nothing
+        }
+      },
+    };
   }
 
   get [INITIALIZING_PRIORITY]() {
     return {
       ...super._initializing(),
-      async initializingTemplateTask() {},
+      ...this._initializing(),
+    };
+  }
+
+  _prompting() {
+    return {
+      askForModuleName,
+      askForServerSideOpts,
+      askForOptionalItems,
     };
   }
 
   get [PROMPTING_PRIORITY]() {
     return {
       ...super._prompting(),
-      async promptingTemplateTask() {},
+      ...this._prompting(),
     };
   }
 
   get [CONFIGURING_PRIORITY]() {
     return {
       ...super._configuring(),
-      async configuringTemplateTask() {},
     };
   }
 
   get [COMPOSING_PRIORITY]() {
     return {
       ...super._composing(),
-      async composingTemplateTask() {},
     };
   }
 
   get [LOADING_PRIORITY]() {
     return {
       ...super._loading(),
-      async loadingTemplateTask() {},
     };
   }
 
   get [PREPARING_PRIORITY]() {
     return {
       ...super._preparing(),
-      async preparingTemplateTask() {},
     };
   }
 
   get [DEFAULT_PRIORITY]() {
     return {
       ...super._default(),
-      async defaultTemplateTask() {},
     };
   }
 
   get [WRITING_PRIORITY]() {
     return {
-      ...super._writing(),
-      async writingTemplateTask() {
-        await this.writeFiles({
-          sections: {
-            files: [{ templates: ['template-file-server'] }],
-          },
-          context: this,
-        });
-      },
+      ...writeFiles(),
     };
   }
 
   get [POST_WRITING_PRIORITY]() {
     return {
       ...super._postWriting(),
-      async postWritingTemplateTask() {},
     };
   }
 
   get [INSTALL_PRIORITY]() {
     return {
       ...super._install(),
-      async installTemplateTask() {},
     };
   }
 
   get [END_PRIORITY]() {
     return {
       ...super._end(),
-      async endTemplateTask() {},
     };
   }
 }

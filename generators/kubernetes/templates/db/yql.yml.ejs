@@ -1,0 +1,534 @@
+<%#
+ Copyright 2013-2022 the original author or authors from the JHipster project.
+
+ This file is part of the JHipster project, see https://www.jhipster.tech/
+ for more information.
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      https://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-%>
+apiVersion: <%= KUBERNETES_POLICY_API_VERSION %>
+kind: PodDisruptionBudget
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-master
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-master
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: <%= app.baseName.toLowerCase() %>-master
+---
+apiVersion: <%= KUBERNETES_POLICY_API_VERSION %>
+kind: PodDisruptionBudget
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-tserver
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: <%= app.baseName.toLowerCase() %>-tserver
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Service
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-masters
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-master
+    service-type: "headless"
+spec:
+  clusterIP: None
+  ports:
+    - name: "tcp-rpc-port"
+      port: 7100
+  selector:
+    app: <%= app.baseName.toLowerCase() %>-master
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Service
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-master-ui
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-master
+spec:
+  ports:
+    - name: "http-ui"
+      port: 7000
+  selector:
+    app: <%= app.baseName.toLowerCase() %>-master
+  type: ClusterIP
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Service
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-tservers
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+    service-type: "headless"
+spec:
+  clusterIP: None
+  ports:
+    - name: "tcp-rpc-port"
+      port: 9100
+  selector:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Service
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %>
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+spec:
+  ports:
+  <%_ if (app.prodDatabaseTypePostgres) { _%>
+  - name: "tcp-ysql-port"
+    port: 5433
+  - name: "http-ysql-met"
+    port: 13000
+  <%_ } else if (app.databaseTypeCassandra) { _%>
+  - name: "tcp-ycql-port"
+    port: 9042
+  - name: "http-ycql-met"
+    port: 12000
+  <%_ } _%>
+  selector:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+  type: ClusterIP
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Service
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-tserver-ui
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+spec:
+  ports:
+    - name: "http-ui"
+      port: 9000
+  selector:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+  type: ClusterIP
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Secret
+metadata:
+  name: <%= KUBERNETES_YB_DSQL %>-vault
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-vault
+type: Opaque
+data:
+<%_ if (app.prodDatabaseTypePostgres) { _%>
+  ysql-secret: <%= Buffer.from(getDBPassword()).toString('base64') %>
+<%_ } else if (app.databaseTypeCassandra) { _%>
+  ycql-secret: <%= Buffer.from(getDBPassword()).toString('base64') %>
+<%_ } _%>
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: Secret
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-vault
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-vault
+type: Opaque
+data:
+  yql-secret: <%= Buffer.from(getDBPassword()).toString('base64') %>
+---
+apiVersion: <%= KUBERNETES_STATEFULSET_API_VERSION %>
+kind: StatefulSet
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-master
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-master
+spec:
+  serviceName: <%= app.baseName.toLowerCase() %>-masters
+  podManagementPolicy: Parallel
+  replicas: 3
+  volumeClaimTemplates:
+  - metadata:
+      name: <%= app.baseName.toLowerCase() %>-master
+    spec:
+      accessModes:
+      - "ReadWriteOnce"
+      storageClassName: <%= kubernetesStorageClassName %>
+      resources:
+        requests:
+          storage: 50Gi
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  selector:
+    matchLabels:
+      app: <%= app.baseName.toLowerCase() %>-master
+  template:
+    metadata:
+      labels:
+        app: <%= app.baseName.toLowerCase() %>-master
+<%_ if (istio) { _%>
+      annotations:
+        sidecar.istio.io/inject: "false"
+<%_ } _%>
+    spec:
+      terminationGracePeriodSeconds: 300
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - <%= app.baseName.toLowerCase() %>-master
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: <%= app.baseName.toLowerCase() %>-master
+        image: <%= DOCKER_YBDB %>
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "bash"
+                - "-c"
+                - >
+                  mkdir -p /mnt/disk0/cores;
+                  mkdir -p /mnt/disk0/yb-data/scripts;
+                  if [ ! -f /mnt/disk0/yb-data/scripts/log_cleanup.sh ]; then
+                    if [ -f /home/yugabyte/bin/log_cleanup.sh ]; then
+                      cp /home/yugabyte/bin/log_cleanup.sh /mnt/disk0/yb-data/scripts;
+                    fi;
+                  fi
+        livenessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - touch "/mnt/disk0/disk.check"
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: YBDEVOPS_CORECOPY_DIR
+          value: "/mnt/disk0/cores"
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 1
+            memory: 2Gi
+        workingDir: "/mnt/disk0/cores"
+        command:
+        - "/sbin/tini"
+        - "--"
+        args:
+        - "/bin/bash"
+        - "-c"
+        - |
+          touch "/mnt/disk0/disk.check" && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="$(HOSTNAME).<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local" \
+              --port="7100"
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="$(HOSTNAME).<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100" \
+              --port="7100"
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="0.0.0.0" \
+              --port="7000"
+          fi && \
+          if [[ -f /home/yugabyte/tools/k8s_parent.py ]]; then
+            k8s_parent="/home/yugabyte/tools/k8s_parent.py"
+          else
+            k8s_parent=""
+          fi && \
+          exec ${k8s_parent} /home/yugabyte/bin/yb-master \
+            --fs_data_dirs=/mnt/disk0 \
+            --master_addresses=<%= app.baseName.toLowerCase() %>-master-0.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-1.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-2.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 \
+            --replication_factor=3 \
+            --enable_ysql=true \
+            --metric_node_name=$(HOSTNAME) \
+            --memory_limit_hard_bytes=1824522240 \
+            --stderrthreshold=0 \
+            --num_cpus=1 \
+            --undefok=num_cpus,enable_ysql \
+            --default_memory_limit_to_ram_ratio="0.85" \
+            --rpc_bind_addresses=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local \
+            --server_broadcast_addresses=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 \
+            --webserver_interface=0.0.0.0
+        ports:
+        - containerPort: 7000
+          name: "http-ui"
+        - containerPort: 7100
+          name: "tcp-rpc-port"
+        volumeMounts:
+        - name: <%= app.baseName.toLowerCase() %>-master
+          mountPath: /mnt/disk0
+      - name: <%= app.baseName.toLowerCase() %>-yb-cleanup
+        image: <%= DOCKER_YBDB %>
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USER
+          value: "yugabyte"
+        command:
+        - "/sbin/tini"
+        - "--"
+        args:
+        - "/bin/bash"
+        - "-c"
+        - >
+          while true; do
+            sleep 3600;
+            /home/yugabyte/scripts/log_cleanup.sh;
+          done
+        volumeMounts:
+        - name: <%= app.baseName.toLowerCase() %>-master
+          mountPath: /home/yugabyte/
+          subPath: yb-data
+        - name: <%= app.baseName.toLowerCase() %>-master
+          mountPath: /var/yugabyte/cores
+          subPath: cores
+---
+apiVersion: <%= KUBERNETES_STATEFULSET_API_VERSION %>
+kind: StatefulSet
+metadata:
+  name: <%= app.baseName.toLowerCase() %>-tserver
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= app.baseName.toLowerCase() %>-tserver
+spec:
+  serviceName: <%= app.baseName.toLowerCase() %>-tservers
+  podManagementPolicy: Parallel
+  replicas: 3
+  volumeClaimTemplates:
+  - metadata:
+      name: <%= app.baseName.toLowerCase() %>-tserver
+    spec:
+      accessModes:
+        - "ReadWriteOnce"
+      storageClassName: <%= kubernetesStorageClassName %>
+      resources:
+        requests:
+          storage: 50Gi
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      partition: 0
+  selector:
+    matchLabels:
+      app: <%= app.baseName.toLowerCase() %>-tserver
+  template:
+    metadata:
+      labels:
+        app: <%= app.baseName.toLowerCase() %>-tserver
+<%_ if (istio) { _%>
+      annotations:
+        sidecar.istio.io/inject: "false"
+<%_ } _%>
+    spec:
+      terminationGracePeriodSeconds: 300
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - <%= app.baseName.toLowerCase() %>-tserver
+              topologyKey: kubernetes.io/hostname
+      containers:
+      - name: <%= app.baseName.toLowerCase() %>-tserver
+        image: <%= DOCKER_YBDB %>
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - "bash"
+              - "-c"
+              - >
+                mkdir -p /mnt/disk0/cores;
+                mkdir -p /mnt/disk0/yb-data/scripts;
+                if [ ! -f /mnt/disk0/yb-data/scripts/log_cleanup.sh ]; then
+                  if [ -f /home/yugabyte/bin/log_cleanup.sh ]; then
+                    cp /home/yugabyte/bin/log_cleanup.sh /mnt/disk0/yb-data/scripts;
+                  fi;
+                fi
+        livenessProbe:
+          exec:
+            command:
+            - bash
+            - -c
+            - touch "/mnt/disk0/disk.check"
+          failureThreshold: 3
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        env:
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: YBDEVOPS_CORECOPY_DIR
+          value: "/mnt/disk0/cores"
+        resources:
+          limits:
+            cpu: 2
+            memory: 8Gi
+          requests:
+            cpu: 2
+            memory: 4Gi
+        workingDir: "/mnt/disk0/cores"
+        command:
+        - "/sbin/tini"
+        - "--"
+        args:
+        - "/bin/bash"
+        - "-c"
+        - |
+          touch "/mnt/disk0/disk.check" && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local" \
+              --port="9100"
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local:9100" \
+              --port="9100"
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="0.0.0.0" \
+              --port="9000"
+          fi && \
+          if [[ -f /home/yugabyte/tools/k8s_parent.py ]]; then
+            k8s_parent="/home/yugabyte/tools/k8s_parent.py"
+          else
+            k8s_parent=""
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local" \
+              --port="9042"
+          fi && \
+          if [ -f /home/yugabyte/tools/k8s_preflight.py ]; then
+            PYTHONUNBUFFERED="true" /home/yugabyte/tools/k8s_preflight.py \
+              --addr="0.0.0.0:5433" \
+              --port="5433"
+          fi && \
+          exec ${k8s_parent} /home/yugabyte/bin/yb-tserver \
+            --fs_data_dirs=/mnt/disk0 \
+            --tserver_master_addrs=<%= app.baseName.toLowerCase() %>-master-0.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-1.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-2.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 \
+            --metric_node_name=$(HOSTNAME) \
+            --memory_limit_hard_bytes=7298088960 \
+            --stderrthreshold=0 \
+            --num_cpus=2 \
+            --undefok=num_cpus,enable_ysql \
+            --use_node_hostname_for_local_tserver=true \
+            --rpc_bind_addresses=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local \
+            --server_broadcast_addresses=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local:9100 \
+            --webserver_interface=0.0.0.0 \
+            --enable_ysql=true \
+            --pgsql_proxy_bind_address=0.0.0.0:5433 \
+            --cql_proxy_bind_address=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local \
+            <%_ if (app.prodDatabaseTypePostgres) { _%>
+            --ysql_enable_auth=true \
+            <%_ } else if (app.databaseTypeCassandra) { _%>
+            --use_cassandra_authentication=true
+            <%_ } _%>
+        ports:
+        - containerPort: 9000
+          name: "http-ui"
+        - containerPort: 9100
+          name: "tcp-rpc-port"
+        <%_if (app.prodDatabaseTypePostgres) { _%>
+        - containerPort: 13000
+          name: "http-ysql-met"
+        - containerPort: 5433
+          name: "tcp-ysql-port"
+        <%_ } else if (app.databaseTypeCassandra) { _%>
+        - containerPort: 12000
+          name: "http-ycql-met"
+        - containerPort: 9042
+          name: "tcp-ycql-port"
+        <%_ } _%>
+        volumeMounts:
+        - name: <%= app.baseName.toLowerCase() %>-tserver
+          mountPath: /mnt/disk0
+      - name: <%= app.baseName.toLowerCase() %>-yb-cleanup
+        image: <%= DOCKER_YBDB %>
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: USER
+          value: "yugabyte"
+        command:
+        - "/sbin/tini"
+        - "--"
+        args:
+        - "/bin/bash"
+        - "-c"
+        - >
+          while true; do
+            sleep 3600;
+            /home/yugabyte/scripts/log_cleanup.sh;
+          done
+        volumeMounts:
+        - name: <%= app.baseName.toLowerCase() %>-tserver
+          mountPath: /home/yugabyte/
+          subPath: yb-data
+        - name: <%= app.baseName.toLowerCase() %>-tserver
+          mountPath: /var/yugabyte/cores
+          subPath: cores

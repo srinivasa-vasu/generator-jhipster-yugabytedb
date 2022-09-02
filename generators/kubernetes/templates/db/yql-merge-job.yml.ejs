@@ -1,0 +1,107 @@
+---
+apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
+kind: ConfigMap
+metadata:
+  name: <%= KUBERNETES_YB_DSQL %>-cm
+  namespace: <%= kubernetesNamespace %>
+data:
+  ysql-init-db.sql: |
+    <%_ appConfigs.forEach((app, index)=> { _%>
+      <%_ if (app.prodDatabaseTypePostgres) { _%>
+      CREATE DATABASE <%= app.baseName.toLowerCase() %>\;
+      CREATE ROLE <%= app.baseName.toLowerCase() %> WITH LOGIN PASSWORD \'${<%= app.baseName.toLowerCase() %>}\'\;
+      GRANT ALL PRIVILEGES ON DATABASE <%= app.baseName.toLowerCase() %> TO <%= app.baseName.toLowerCase() %>\;
+      <%_ } _%>
+    <%_ }) _%>
+  ycql-init-db.sql: |
+    <%_ appConfigs.forEach((app, index)=> { _%>
+      <%_ if (app.databaseTypeCassandra) { _%>
+      CREATE KEYSPACE IF NOT EXISTS <%= app.baseName.toLowerCase() %>\;
+      CREATE ROLE IF NOT EXISTS <%= app.baseName.toLowerCase() %> WITH LOGIN = true AND PASSWORD = \'${<%= app.baseName.toLowerCase() %>}\'\;
+      GRANT ALL ON KEYSPACE <%= app.baseName.toLowerCase() %> TO <%= app.baseName.toLowerCase() %>\;
+      <%_ } _%>
+    <%_ }) _%>
+---
+apiVersion: <%= KUBERNETES_JOB_API_VERSION %>
+kind: Job
+metadata:
+  name: <%= KUBERNETES_YB_DSQL %>-job
+  namespace: <%= kubernetesNamespace %>
+  labels:
+    app: <%= KUBERNETES_YB_DSQL %>-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: <%= KUBERNETES_YB_DSQL %>-init
+        image: <%= DOCKER_YBDB %>
+        env:
+        - name: YSQL_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: <%= KUBERNETES_YB_DSQL %>-vault
+              key: ysql-secret
+        - name: YCQL_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: <%= KUBERNETES_YB_DSQL %>-vault
+              key: ycql-secret
+<%_ appConfigs.forEach((app, index)=> { _%>
+  <%_ if (app.databaseTypeCassandra || app.prodDatabaseTypePostgres) { _%>
+        - name: <%= app.baseName.toLowerCase() %>
+          valueFrom:
+            secretKeyRef:
+              name: <%= app.baseName.toLowerCase() %>-vault
+              key: yql-secret
+  <%_ } _%>
+<%_ }) _%>
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+          readOnly: true
+        command:
+          - "/sbin/tini"
+          - "--"
+        args:
+          - "/bin/bash"
+          - "-c"
+          - |
+              while true
+              do
+                rt=$(echo 'exit' | curl -s telnet://<%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %>:5433)
+                if [ $? -eq 0 ]; then
+                  echo "DB is UP"
+                  break
+                fi
+                echo "DB is not yet reachable; sleep for a few secs before retry"
+                sleep 5
+              done
+              # update the default creds
+              echo "Updating the default YSQL password"
+              /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password='yugabyte' -c "ALTER USER yugabyte PASSWORD '${YSQL_SECRET}';"
+              echo "Updating the default YCQL password"
+              /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p 'cassandra' -e "ALTER ROLE cassandra WITH PASSWORD = '${YCQL_SECRET}';"
+
+              if [ -f "/config/ysql-init-db.sql" ]; then
+                echo "Initializing YSQL DB Objects"
+                rm -f /tmp/ysql-init-db.sql; while read -r line
+                do
+                  eval echo "$line" >> /tmp/ysql-init-db.sql
+                done < "/config/ysql-init-db.sql"
+                /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password=\'${YSQL_SECRET}\' -f /tmp/ysql-init-db.sql
+              fi
+
+              if [ -f "/config/ycql-init-db.sql" ]; then
+                echo "Initializing YCQL DB Objects"
+                rm -f /tmp/ycql-init-db.sql; while read -r line
+                do
+                  eval echo "$line" >> /tmp/ycql-init-db.sql
+                done < "/config/ycql-init-db.sql"
+                /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p ${YCQL_SECRET} -f /tmp/ycql-init-db.sql
+              fi
+      restartPolicy: OnFailure
+      volumes:
+        - name: config
+          configMap:
+            name: <%= KUBERNETES_YB_DSQL %>-cm
+  backoffLimit: 3
