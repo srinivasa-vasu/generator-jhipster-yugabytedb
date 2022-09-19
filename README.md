@@ -10,7 +10,7 @@
 
 <img src="https://raw.githubusercontent.com/jhipster/jhipster-artwork/main/family/jhipster_family_member_6.png" alt="JHipster Family Member" width=200 style="max-width:50%;">
 
-This is a [JHipster](https://www.jhipster.tech/) blueprint that adds [YugabyteDB](https://www.yugabyte.com/yugabytedb/) (distributed SQL) support. This blueprint generates a Jhipster application with YugabyteDB as the database. It supports both [YSQL](https://docs.yugabyte.com/stable/api/ysql/) and [YCQL](https://docs.yugabyte.com/stable/api/ycql/) APIs.
+This is a [JHipster](https://www.jhipster.tech/) blueprint that adds [YugabyteDB](https://www.yugabyte.com/yugabytedb/) (distributed SQL) support. This blueprint generates a JHipster application with YugabyteDB as the database. It supports both [YSQL](https://docs.yugabyte.com/stable/api/ysql/) and [YCQL](https://docs.yugabyte.com/stable/api/ycql/) APIs.
 
 ## Installation and Usage
 
