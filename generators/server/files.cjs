@@ -63,9 +63,7 @@ const cassandraFiles = {
   serverResource: [
     {
       path: SERVER_MAIN_RES_DIR,
-      templates: [
-        'config/ycql/init.cql',
-      ],
+      templates: ['config/ycql/init.cql'],
     },
   ],
   serverTestFw: [
