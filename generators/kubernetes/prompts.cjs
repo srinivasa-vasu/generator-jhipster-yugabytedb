@@ -21,6 +21,7 @@ const { POSTGRESQL, CASSANDRA } = Types;
 
 module.exports = {
   askForAPI,
+  askForRF,
   askForPersistentStorage,
 };
 
@@ -38,7 +39,7 @@ async function askForAPI() {
       when: () => merge >= 2,
       type: 'list',
       name: 'kubernetesYBDPRuntime',
-      message: 'Do you want to have a single distributed YugabyteDB runtime?',
+      message: 'Do you need a single distributed YugabyteDB runtime?',
       choices: [
         {
           value: true,
@@ -49,12 +50,54 @@ async function askForAPI() {
           name: 'No',
         },
       ],
-      default: true,
+      default: this.kubernetesYBDPRuntime || true,
     },
   ];
+
   const props = await this.prompt(prompts);
-  this.kubernetesYBDPRuntime = this.jhipsterConfig.kubernetesYBDPRuntime =
-    props.kubernetesYBDPRuntime !== undefined ? props.kubernetesYBDPRuntime : false;
+  this.kubernetesYBDPRuntime = this.jhipsterConfig.kubernetesYBDPRuntime = props.kubernetesYBDPRuntime || false;
+}
+
+async function askForRF() {
+  if (this.regenerate) return;
+
+  let isDSQL = false;
+  this.appConfigs.forEach(appConfig => {
+    if (appConfig.prodDatabaseType === POSTGRESQL || appConfig.prodDatabaseType === CASSANDRA) {
+      isDSQL = true;
+    }
+  });
+
+  const prompts = [
+    {
+      when: () => isDSQL,
+      type: 'list',
+      name: 'kubernetesYBDPRF',
+      message: 'Choose the replication factor for YugabyteDB',
+      choices: [
+        {
+          value: '1',
+          name: 'one',
+        },
+        {
+          value: '3',
+          name: 'three',
+        },
+        {
+          value: '5',
+          name: 'five',
+        },
+        {
+          value: '7',
+          name: 'seven',
+        },
+      ],
+      default: this.kubernetesYBDPRF || 3,
+    },
+  ];
+
+  const props = await this.prompt(prompts);
+  this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF = props.kubernetesYBDPRF || 3;
 }
 
 async function askForPersistentStorage() {

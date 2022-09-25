@@ -17,7 +17,7 @@ import {
 import { writeFiles } from './files.cjs';
 import { k8s, constants } from '../constants.cjs';
 import util from '../utils.cjs';
-import { askForAPI, askForPersistentStorage } from './prompts.cjs';
+import { askForAPI, askForRF, askForPersistentStorage } from './prompts.cjs';
 
 const { getDBCUrl } = util;
 import crypto from 'crypto';
@@ -61,8 +61,8 @@ export default class extends KubernetesGenerator {
       },
       initLocalProps() {
         this.dsqlType = this.jhipsterConfig.dsqlType;
-        this.kubernetesYBDPRuntime =
-          this.jhipsterConfig.kubernetesYBDPRuntime !== undefined ? this.jhipsterConfig.kubernetesYBDPRuntime : false;
+        this.kubernetesYBDPRuntime = this.jhipsterConfig.kubernetesYBDPRuntime || false;
+        this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF || 3;
       },
     };
   }
@@ -77,6 +77,7 @@ export default class extends KubernetesGenerator {
   _prompting() {
     return {
       askForAPI,
+      askForRF,
       askForPersistentStorage,
     };
   }
@@ -92,7 +93,8 @@ export default class extends KubernetesGenerator {
     return {
       ...super._configuring(),
       async loadingLocalPromptTask() {
-        this.jhipsterConfig.kubernetesYBDPRuntime = this.kubernetesYBDPRuntime !== undefined ? this.kubernetesYBDPRuntime : false;
+        this.jhipsterConfig.kubernetesYBDPRuntime = this.kubernetesYBDPRuntime || false;
+        this.jhipsterConfig.kubernetesYBDPRF = this.kubernetesYBDPRF || 3;
       },
     };
   }

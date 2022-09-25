@@ -164,7 +164,7 @@ metadata:
 spec:
   serviceName: <%= app.baseName.toLowerCase() %>-masters
   podManagementPolicy: Parallel
-  replicas: 3
+  replicas: <%= kubernetesYBDPRF %>
   volumeClaimTemplates:
   - metadata:
       name: <%= app.baseName.toLowerCase() %>-master
@@ -285,8 +285,8 @@ spec:
           fi && \
           exec ${k8s_parent} /home/yugabyte/bin/yb-master \
             --fs_data_dirs=/mnt/disk0 \
-            --master_addresses=<%= app.baseName.toLowerCase() %>-master-0.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-1.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-2.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 \
-            --replication_factor=3 \
+            --master_addresses=<%_ for(let instance = 0; instance < kubernetesYBDPRF; instance++) { _%><%= app.baseName.toLowerCase() %>-master-<%= instance %>.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 <%_ if(instance < (kubernetesYBDPRF-1)){ _%>, <%_ } } %> \
+            --replication_factor=<%= kubernetesYBDPRF %> \
             --enable_ysql=true \
             --metric_node_name=$(HOSTNAME) \
             --memory_limit_hard_bytes=1824522240 \
@@ -340,7 +340,7 @@ metadata:
 spec:
   serviceName: <%= app.baseName.toLowerCase() %>-tservers
   podManagementPolicy: Parallel
-  replicas: 3
+  replicas: <%= kubernetesYBDPRF %>
   volumeClaimTemplates:
   - metadata:
       name: <%= app.baseName.toLowerCase() %>-tserver
@@ -471,7 +471,7 @@ spec:
           fi && \
           exec ${k8s_parent} /home/yugabyte/bin/yb-tserver \
             --fs_data_dirs=/mnt/disk0 \
-            --tserver_master_addrs=<%= app.baseName.toLowerCase() %>-master-0.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-1.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100,<%= app.baseName.toLowerCase() %>-master-2.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 \
+            --tserver_master_addrs=<%_ for(let instance = 0; instance < kubernetesYBDPRF; instance++) { _%><%= app.baseName.toLowerCase() %>-master-<%= instance %>.<%= app.baseName.toLowerCase() %>-masters.$(NAMESPACE).svc.cluster.local:7100 <%_ if(instance < (kubernetesYBDPRF-1)){ _%>, <%_ } } %> \
             --metric_node_name=$(HOSTNAME) \
             --memory_limit_hard_bytes=7298088960 \
             --stderrthreshold=0 \
