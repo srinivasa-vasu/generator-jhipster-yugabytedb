@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubGenerator docker-compose of YugabyteDB JHipster blueprint run should succeed 1`] = `
+Object {
+  "../1f1e701fe9ccb0ebe661c23759a92c11f0dfbf9c/.yo-rc.json": Object {
+    "stateCleared": "modified",
+  },
+  ".yo-rc.json": Object {
+    "stateCleared": "modified",
+  },
+  "README-DOCKER-COMPOSE.md": Object {
+    "stateCleared": "modified",
+  },
+  "docker-compose.yml": Object {
+    "stateCleared": "modified",
+  },
+}
+`;

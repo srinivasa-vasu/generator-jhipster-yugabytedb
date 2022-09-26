@@ -160,8 +160,17 @@ spec:
               name: <%= app.baseName.toLowerCase() %>-vault
               key: yql-secret
     <%_ if (app.reactive) { _%>
+      <%_ if (kubernetesYBDPRuntime) { _%>
+        - name: SPRING_R2DBC_URL
+          value: <%- getR2DBCUrl(app.prodDatabaseType, { hostname: `${KUBERNETES_YB_DSQL}-${KUBERNETES_YB_DSQL_EP_SUFFIX}.${kubernetesNamespace}.svc.cluster.local`, databaseName: app.baseName.toLowerCase() }) %>
+        - name: SPRING_LIQUIBASE_URL
+          value: <%- getJDBCUrl(app.prodDatabaseType, { hostname: `${KUBERNETES_YB_DSQL}-${KUBERNETES_YB_DSQL_EP_SUFFIX}.${kubernetesNamespace}.svc.cluster.local`, databaseName: app.baseName.toLowerCase() }) %>
+      <%_ } else { _%>
         - name: SPRING_R2DBC_URL
           value: <%- getR2DBCUrl(app.prodDatabaseType, { hostname: `${app.baseName.toLowerCase()}-${KUBERNETES_YB_DSQL_EP_SUFFIX}.${kubernetesNamespace}.svc.cluster.local`, databaseName: app.baseName.toLowerCase() }) %>
+        - name: SPRING_LIQUIBASE_URL
+          value: <%- getJDBCUrl(app.prodDatabaseType, { hostname: `${app.baseName.toLowerCase()}-${KUBERNETES_YB_DSQL_EP_SUFFIX}.${kubernetesNamespace}.svc.cluster.local`, databaseName: app.baseName.toLowerCase() }) %>
+      <%_ } _%>
     <%_ } _%>
   <%_ } _%>
 <%_ if (app.searchEngineElasticsearch) { _%>

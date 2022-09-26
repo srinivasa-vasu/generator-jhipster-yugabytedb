@@ -76,6 +76,7 @@ const Types = {
   GRADLE_ENTERPRISE_HOST: 'gradleEnterpriseHost',
   EUREKA: 'eureka',
   CONSUL: 'consul',
+  KAFKA: 'kafka',
   NO: 'no',
   FALSE: false,
 };

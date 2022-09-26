@@ -38,10 +38,10 @@ const databaseName = prodDatabaseTypeMysql || prodDatabaseTypeMariadb ? baseName
 _%>
   <%_ if (reactive) { _%>
       - SPRING_R2DBC_URL=<%- getR2DBCUrl(prodDatabaseType, { hostname: `${baseName.toLowerCase()}-ybdb`, databaseName: databaseName }) %>
+      - SPRING_LIQUIBASE_URL=<%- getJDBCUrl(prodDatabaseType, { hostname: `${baseName.toLowerCase()}-ybdb`, databaseName: databaseName }) %>
   <%_ } else { _%>
       - SPRING_DATASOURCE_URL=<%- getJDBCUrl(prodDatabaseType, { hostname: `${baseName.toLowerCase()}-ybdb`, databaseName: databaseName }) %>
   <%_ } _%>
-      - SPRING_LIQUIBASE_URL=<%- getJDBCUrl(prodDatabaseType, { hostname: `${baseName.toLowerCase()}-ybdb`, databaseName: databaseName }) %>
 <%_ } _%>
 <%_ if (cacheProviderRedis) { _%>
       - JHIPSTER_CACHE_REDIS_SERVER=redis://<%= baseName.toLowerCase() %>-redis:6379
