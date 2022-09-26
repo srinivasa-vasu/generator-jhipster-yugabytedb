@@ -21,7 +21,6 @@ import {
 import { Types } from '../constants.cjs';
 const { POSTGRESQL, YSQL, YCQL, KAFKA, GATEWAY, MONOLITH, PROMETHEUS, EUREKA, NO, ELASTICSEARCH, MEMCACHED, REDIS } = Types;
 
-
 export default class extends BaseDockerGenerator {
   constructor(args, opts, features) {
     super(args, opts, { taskPrefix: PRIORITY_PREFIX, ...features });
@@ -110,11 +109,10 @@ export default class extends BaseDockerGenerator {
 
           // Add database configuration
           const database = appConfig.prodDatabaseType === POSTGRESQL ? YSQL : YCQL;
-          const dbSuffix = 'ybdb'
-          if (database !== NO ) {
+          if (database !== NO) {
             const relativePath = normalize(pathjs.relative(this.destinationRoot(), `${path}/src/main/docker`));
             const databaseYaml = jsyaml.load(this.fs.read(`${path}/src/main/docker/${database}.yml`));
-            const databaseServiceName = `${lowercaseBaseName}-${dbSuffix}`;
+            const databaseServiceName = `${lowercaseBaseName}-ybdb`;
             let databaseYamlConfig = databaseYaml.services[databaseServiceName];
             delete databaseYamlConfig.ports;
 
