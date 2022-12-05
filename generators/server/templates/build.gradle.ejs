@@ -329,7 +329,7 @@ if (SPRING_BOOT_VERSION.indexOf('M') > -1 || SPRING_BOOT_VERSION.indexOf('RC') >
     implementation "org.hibernate:hibernate-jcache"
   <%_ } _%>
 <%_ } _%>
-<%_ if (cacheProviderRedis || databaseTypeMongodb || databaseTypeCouchbase || databaseTypeNeo4j || databaseTypeCassandra || searchEngineElasticsearch || messageBrokerKafka || databaseTypeSql) { _%>
+<%_ if (cacheProviderRedis || databaseTypeCassandra || searchEngineElasticsearch || messageBrokerKafka || databaseTypeSql) { _%>
     testImplementation "org.testcontainers:junit-jupiter"
     testImplementation "org.testcontainers:testcontainers"
 <%_ } _%>
@@ -354,7 +354,7 @@ if (SPRING_BOOT_VERSION.indexOf('M') > -1 || SPRING_BOOT_VERSION.indexOf('RC') >
 <%_ if (databaseTypeCassandra) { _%>
     implementation "org.lz4:lz4-java"
     testImplementation "org.cassandraunit:cassandra-unit-spring"
-    testImplementation "org.testcontainers:cassandra"
+    testImplementation "org.testcontainers:yugabytedb"
 <%_ } _%>
 <%_ if (cacheProviderEhCache) { _%>
     implementation "org.ehcache:ehcache"

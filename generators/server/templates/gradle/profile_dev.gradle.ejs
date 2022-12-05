@@ -20,7 +20,7 @@
 sourceSets {
     test {
         java {
-            exclude '<%= packageFolder %>/config/<% if (prodDatabaseTypeMariadb) { %>Mariadb<% } else if (prodDatabaseTypeMssql) { %>MsSql<% } else if (prodDatabaseTypeMysql) { %>Mysql<% } else if (prodDatabaseTypePostgres) { %>PostgreSql<% } %>TestContainer.java'
+            exclude '<%= packageFolder %>/config/<% if (prodDatabaseTypeMariadb) { %>Mariadb<% } else if (prodDatabaseTypeMssql) { %>MsSql<% } else if (prodDatabaseTypeMysql) { %>Mysql<% } else if (prodDatabaseTypePostgres) { %>YugabyteDBYSQL<% } %>TestContainer.java'
         }
     }
 }
@@ -76,7 +76,7 @@ dependencies {
     testImplementation "org.testcontainers:mariadb"
   <%_ } _%>
   <%_ if (prodDatabaseTypePostgres) { _%>
-    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:yugabytedb:<%= YBDB_TC %>"
   <%_ } _%>
   <%_ if (prodDatabaseTypeMssql) { _%>
     testImplementation "org.testcontainers:mssqlserver"

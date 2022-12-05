@@ -50,6 +50,7 @@ export default class extends ServerGenerator {
         this.YSQL_DRIVER_VERSION = constants.YSQL_DRIVER_VERSION;
         this.YCQL_DRIVER_VERSION = constants.YCQL_DRIVER_VERSION;
         this.YBDB_DRIVER = constants.YBDB_DRIVER;
+        this.YBDB_TC = constants.YBDB_TC;
       },
       initLocalProps() {
         if (this.jhipsterConfig.dsqlType !== undefined) {

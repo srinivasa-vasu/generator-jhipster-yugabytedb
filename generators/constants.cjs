@@ -93,6 +93,7 @@ const constants = {
   YBDB_DRIVER: 'com.yugabyte.Driver',
   YCQL_DRIVER_VERSION: '4.6.0-yb-10',
   YBDB_VERSION: '1.0.0',
+  YBDB_TC: '1.17.6',
 };
 
 const k8s = {

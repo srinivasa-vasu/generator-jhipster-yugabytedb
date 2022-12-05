@@ -39,6 +39,7 @@
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: <%= YBDB_DRIVER %>
     hikari:
       poolName: Hikari
       auto-commit: false

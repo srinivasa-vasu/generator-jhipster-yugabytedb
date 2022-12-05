@@ -31,15 +31,6 @@
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 # ===================================================================
 
-<%_ if (databaseTypeNeo4j) { _%>
-org:
-  neo4j:
-    migrations:
-      locations-to-scan:
-      packages-to-scan: <%= packageName %>.config.neo4j
-      installed-by: <%= baseName %>
-<%_ } _%>
-
 <%_ if (serviceDiscoveryEureka) { _%>
 eureka:
   client:
@@ -49,16 +40,6 @@ eureka:
     instanceId: <%= baseName %>:${spring.application.instance-id:${random.value}}
 <%_ } _%>
 
-<%_ if (databaseTypeMongodb) { _%>
-mongock:
-  migration-scan-package:
-    - <%= packageName %>.config.dbmigrations
-  mongo-db:
-    read-concern: local
-    write-concern:
-      journal: false
-
-<%_ } _%>
 spring:
   application:
     name: <%= baseName %>

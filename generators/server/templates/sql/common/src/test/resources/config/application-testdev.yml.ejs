@@ -57,6 +57,7 @@ spring:
 <%_ } else { _%>
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: <%= YBDB_DRIVER %>
     hikari:
       auto-commit: false
   <%_ if (!devDatabaseTypeH2Any) { _%>

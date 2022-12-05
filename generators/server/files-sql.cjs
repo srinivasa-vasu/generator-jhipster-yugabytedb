@@ -137,8 +137,10 @@ const postgresFiles = {
       path: SERVER_TEST_SRC_DIR,
       templates: [
         {
-          file: 'package/config/PostgreSqlTestContainer.java',
-          renameTo: generator => `${generator.testDir}config/PostgreSqlTestContainer.java`,
+          // file: 'package/config/PostgreSqlTestContainer.java',
+          // renameTo: generator => `${generator.testDir}config/PostgreSqlTestContainer.java`,
+          file: 'package/config/YugabyteDBYSQLTestContainer.java',
+          renameTo: generator => `${generator.testDir}config/YugabyteDBYSQLTestContainer.java`,
         },
       ],
     },

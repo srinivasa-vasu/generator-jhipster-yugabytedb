@@ -20,7 +20,7 @@
 sourceSets {
     test {
         java {
-            exclude '<%= packageFolder %>/config/<% if (devDatabaseTypeMariadb) { %>Mariadb<% } else if (devDatabaseTypeMssql) { %>MsSql<% } else if (devDatabaseTypeMysql) { %>Mysql<% } else if (devDatabaseTypePostgres) { %>PostgreSql<% } %>TestContainer.java'
+            exclude '<%= packageFolder %>/config/<% if (devDatabaseTypeMariadb) { %>Mariadb<% } else if (devDatabaseTypeMssql) { %>MsSql<% } else if (devDatabaseTypeMysql) { %>Mysql<% } else if (devDatabaseTypePostgres) { %>YugabyteDBYSQL<% } %>TestContainer.java'
         }
     }
 }
@@ -41,7 +41,7 @@ dependencies {
     <%_ } _%>
     implementation "com.yugabyte:jdbc-yugabytedb:${ysqlDriverVersion}"
     liquibaseRuntime "com.yugabyte:jdbc-yugabytedb:${ysqlDriverVersion}"
-    testImplementation "org.testcontainers:postgresql"
+    testImplementation "org.testcontainers:yugabytedb:<%= YBDB_TC %>"
   <%_ } _%>
   <%_ if (prodDatabaseTypeMariadb) { _%>
     <%_ if (reactive) { _%>
