@@ -401,9 +401,6 @@ Object {
   "src/test/java/com/mycompany/myapp/config/JHipsterBlockHoundIntegration.java": Object {
     "stateCleared": "modified",
   },
-  "src/test/java/com/mycompany/myapp/config/PostgreSqlTestContainer.java": Object {
-    "stateCleared": "modified",
-  },
   "src/test/java/com/mycompany/myapp/config/SpringBootTestClassOrderer.java": Object {
     "stateCleared": "modified",
   },
@@ -411,6 +408,9 @@ Object {
     "stateCleared": "modified",
   },
   "src/test/java/com/mycompany/myapp/config/TestContainersSpringContextCustomizerFactory.java": Object {
+    "stateCleared": "modified",
+  },
+  "src/test/java/com/mycompany/myapp/config/YugabyteDBYSQLTestContainer.java": Object {
     "stateCleared": "modified",
   },
   "src/test/java/com/mycompany/myapp/security/DomainUserDetailsServiceIT.java": Object {

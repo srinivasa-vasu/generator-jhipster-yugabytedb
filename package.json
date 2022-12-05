@@ -1,7 +1,6 @@
 {
   "name": "generator-jhipster-yugabytedb",
   "version": "1.0.0",
-  "private": true,
   "description": "Jhipster blueprint generator that adds YugabyteDB (distributed SQL) support. You can use this generator as `jhipster --blueprints yugabytedb`",
   "keywords": [
     "yeoman-generator",

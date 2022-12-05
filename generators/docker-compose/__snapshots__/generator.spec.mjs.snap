@@ -2,7 +2,7 @@
 
 exports[`SubGenerator docker-compose of YugabyteDB JHipster blueprint run should succeed 1`] = `
 Object {
-  "../1f1e701fe9ccb0ebe661c23759a92c11f0dfbf9c/.yo-rc.json": Object {
+  "../0166eb07f9e1fc10c8d9335d40ebb63f54447e91/.yo-rc.json": Object {
     "stateCleared": "modified",
   },
   ".yo-rc.json": Object {

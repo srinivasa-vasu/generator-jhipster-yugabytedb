@@ -1262,9 +1262,6 @@ Object {
   "src/test/java/com/mycompany/myapp/config/EmbeddedSQL.java": Object {
     "stateCleared": "modified",
   },
-  "src/test/java/com/mycompany/myapp/config/PostgreSqlTestContainer.java": Object {
-    "stateCleared": "modified",
-  },
   "src/test/java/com/mycompany/myapp/config/SpringBootTestClassOrderer.java": Object {
     "stateCleared": "modified",
   },
@@ -1281,6 +1278,9 @@ Object {
     "stateCleared": "modified",
   },
   "src/test/java/com/mycompany/myapp/config/WebConfigurerTestController.java": Object {
+    "stateCleared": "modified",
+  },
+  "src/test/java/com/mycompany/myapp/config/YugabyteDBYSQLTestContainer.java": Object {
     "stateCleared": "modified",
   },
   "src/test/java/com/mycompany/myapp/config/timezone/HibernateTimeZoneIT.java": Object {
