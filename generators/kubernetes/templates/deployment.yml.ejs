@@ -133,7 +133,7 @@ spec:
         - name: JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
           valueFrom:
             secretKeyRef:
-              name: jwt-secret
+              name: <%= app.baseName.toLowerCase() %>-jwt-secret
               key: secret
 <%_ } _%>
 <%_ if (app.prodDatabaseTypePostgres) { _%>

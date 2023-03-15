@@ -49,7 +49,7 @@ function writeFiles() {
           }
         }
         if (!this.app.serviceDiscoveryType && this.app.authenticationType === JWT) {
-          this.template('secret/jwt-secret.yml.ejs', `${appOut}/jwt-secret.yml`);
+          this.template('secret/jwt-secret.yml.ejs', `${appOut}/${appName}-jwt-secret.yml`);
         }
         if (this.app.prodDatabaseTypeCouchbase) {
           this.template('secret/couchbase-secret.yml.ejs', `${appOut}/templates/couchbase-secret.yml`);

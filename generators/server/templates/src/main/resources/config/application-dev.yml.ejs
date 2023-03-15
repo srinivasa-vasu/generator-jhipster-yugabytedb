@@ -182,14 +182,6 @@ spring:
     url: <%- getR2DBCUrl(devDatabaseType, { databaseName: baseName, hostname: 'localhost' }) %>
     username: <%= baseName %>
     password:
-  <%_ } else if (devDatabaseTypeH2Disk) { _%>
-    url: <%- getR2DBCUrl(devDatabaseType, { databaseName: lowercaseBaseName, localDirectory: `././${BUILD_DIR}h2db/db` }) %>
-    username: <%= baseName %>
-    password:
-  <%_ } else if (devDatabaseTypeH2Memory) { _%>
-    url: <%- getR2DBCUrl(devDatabaseType, { databaseName: lowercaseBaseName }) %>
-    username: <%= baseName %>
-    password:
   <%_ } _%>
 <%_ } _%>
   thymeleaf:

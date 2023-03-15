@@ -1527,22 +1527,6 @@
                     <artifactId>spring-boot-devtools</artifactId>
                     <optional>true</optional>
                 </dependency>
-<%_ if (devDatabaseTypeH2Any) { _%>
-                <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
-  <%_ if (prodDatabaseTypeMysql || reactive) { _%>
-                    <version>${h2.version}</version>
-  <%_ } _%>
-                </dependency>
-  <%_ if (reactive) { _%>
-                <dependency>
-                    <groupId>io.r2dbc</groupId>
-                    <artifactId>r2dbc-h2</artifactId>
-                    <version>${h2-r2dbc.version}</version>
-                </dependency>
-  <%_ } _%>
-<%_ } _%>
 <%_ if (devDatabaseTypePostgres) { _%>
                 <dependency>
                     <groupId>com.yugabyte</groupId>
@@ -1570,7 +1554,7 @@
             <build>
 <%_ if (databaseTypeSql) { _%>
                 <plugins>
-  <%_ if (devDatabaseType !== prodDatabaseType && (prodDatabaseTypeMariadb || prodDatabaseTypeMssql || prodDatabaseTypeMysql || prodDatabaseTypePostgres)) { _%>
+  <%_ if (devDatabaseType !== prodDatabaseType && (prodDatabaseTypePostgres)) { _%>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
@@ -1669,15 +1653,6 @@
                                     <groupId>tech.jhipster</groupId>
                                     <artifactId>jhipster-framework</artifactId>
                                     <version>${jhipster-dependencies.version}</version>
-                                </dependency>
-  <%_ } _%>
-  <%_ if (devDatabaseTypeH2Disk) { _%>
-                                <dependency>
-                                    <groupId>com.h2database</groupId>
-                                    <artifactId>h2</artifactId>
-    <%_ if (prodDatabaseTypeMysql || reactive) { _%>
-                                    <version>${h2.version}</version>
-    <%_ } _%>
                                 </dependency>
   <%_ } _%>
                             </dependencies>

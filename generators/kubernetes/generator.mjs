@@ -17,7 +17,7 @@ import {
 import { writeFiles } from './files.cjs';
 import { k8s, constants } from '../constants.cjs';
 import util from '../utils.cjs';
-import { askForAPI, askForRF, askForPersistentStorage } from './prompts.cjs';
+import { askForAPI, askForRF, askForInstanceType, askForPersistentStorage } from './prompts.cjs';
 
 const { getDBCUrl } = util;
 import crypto from 'crypto';
@@ -62,7 +62,8 @@ export default class extends KubernetesGenerator {
       initLocalProps() {
         this.dsqlType = this.jhipsterConfig.dsqlType;
         this.kubernetesYBDPRuntime = this.jhipsterConfig.kubernetesYBDPRuntime || false;
-        this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF || 3;
+        this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF || '3';
+        this.kubernetesYBDPIT = this.jhipsterConfig.kubernetesYBDPIT || 0;
       },
     };
   }
@@ -78,6 +79,7 @@ export default class extends KubernetesGenerator {
     return {
       askForAPI,
       askForRF,
+      askForInstanceType,
       askForPersistentStorage,
     };
   }
@@ -94,7 +96,40 @@ export default class extends KubernetesGenerator {
       ...super._configuring(),
       async loadingLocalPromptTask() {
         this.jhipsterConfig.kubernetesYBDPRuntime = this.kubernetesYBDPRuntime || false;
-        this.jhipsterConfig.kubernetesYBDPRF = this.kubernetesYBDPRF || 3;
+        this.jhipsterConfig.kubernetesYBDPRF = this.kubernetesYBDPRF || '3';
+        this.jhipsterConfig.kubernetesYBDPIT = this.kubernetesYBDPIT || 0;
+        this.masterCPU = 1;
+        this.masterMemory = 1;
+        this.masterMemoryLimitBytes = this.masterMemory * 1024 * 1024 * 870;
+        if (this.kubernetesYBDPIT === 0) {
+          this.tserverCPU = 1;
+          this.tserverMemory = 1;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else if (this.kubernetesYBDPIT === 1) {
+          this.tserverCPU = 2;
+          this.tserverMemory = 8;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else if (this.kubernetesYBDPIT === 2) {
+          this.tserverCPU = 4;
+          this.tserverMemory = 16;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else if (this.kubernetesYBDPIT === 3) {
+          this.tserverCPU = 8;
+          this.tserverMemory = 32;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else if (this.kubernetesYBDPIT === 4) {
+          this.tserverCPU = 16;
+          this.tserverMemory = 64;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else if (this.kubernetesYBDPIT === 5) {
+          this.tserverCPU = 32;
+          this.tserverMemory = 128;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        } else{
+          this.tserverCPU = 1;
+          this.tserverMemory = 1;
+          this.tserverMemoryLimitBytes = this.tserverMemory * 1024 * 1024 * 870;
+        }
       },
     };
   }

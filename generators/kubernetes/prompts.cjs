@@ -22,6 +22,7 @@ const { POSTGRESQL, CASSANDRA } = Types;
 module.exports = {
   askForAPI,
   askForRF,
+  askForInstanceType,
   askForPersistentStorage,
 };
 
@@ -70,34 +71,84 @@ async function askForRF() {
 
   const prompts = [
     {
-      when: () => isDSQL,
+      when: () => true,
       type: 'list',
       name: 'kubernetesYBDPRF',
       message: 'Choose the replication factor for YugabyteDB',
       choices: [
         {
-          value: '1',
+          value: 1,
           name: 'one',
         },
         {
-          value: '3',
+          value: 3,
           name: 'three',
         },
         {
-          value: '5',
+          value: 5,
           name: 'five',
         },
         {
-          value: '7',
+          value: 7,
           name: 'seven',
         },
       ],
-      default: this.kubernetesYBDPRF || 3,
+      default: this.kubernetesYBDPRF ? (this.kubernetesYBDPRF-1)/2 : 1,
     },
   ];
 
   const props = await this.prompt(prompts);
-  this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF = props.kubernetesYBDPRF || 3;
+  this.kubernetesYBDPRF = this.jhipsterConfig.kubernetesYBDPRF = props.kubernetesYBDPRF || 1;
+}
+
+async function askForInstanceType() {
+  if (this.regenerate) return;
+
+  let isDSQL = false;
+  this.appConfigs.forEach(appConfig => {
+    if (appConfig.prodDatabaseType === POSTGRESQL || appConfig.prodDatabaseType === CASSANDRA) {
+      isDSQL = true;
+    }
+  });
+
+  const prompts = [
+    {
+      when: () => isDSQL,
+      type: 'list',
+      name: 'kubernetesYBDPIT',
+      message: 'Choose the node type for YugabyteDB',
+      choices: [
+        {
+          value: 0,
+          name: 'tiny (1vCPU, 1GB RAM)',
+        },
+        {
+          value: 1,
+          name: 'xsmall (2vCPU, 8GB RAM)',
+        },
+        {
+          value: 2,
+          name: 'small (4vCPU, 16GB RAM)',
+        },
+        {
+          value: 3,
+          name: 'medium (8vCPU, 64GB RAM)',
+        },
+        {
+          value: 4,
+          name: 'large (16vCPU, 64GB RAM)',
+        },
+        {
+          value: 5,
+          name: 'xlarge(32vCPU, 128GB RAM)',
+        },
+      ],
+      default: this.kubernetesYBDPIT || 0,
+    },
+  ];
+
+  const props = await this.prompt(prompts);
+  this.kubernetesYBDPIT = this.jhipsterConfig.kubernetesYBDPIT = props.kubernetesYBDPIT || 0;
 }
 
 async function askForPersistentStorage() {

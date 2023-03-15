@@ -200,7 +200,7 @@ liquibase {
     activities {
         main {
             driver "<% if (devDatabaseTypePostgres) { %><%= YBDB_DRIVER %><% } %>"
-            url "<% if (devDatabaseTypePostgres) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: baseName, skipExtraOptions: true }) %><% } else if (devDatabaseTypeH2Disk) { %><%- getJDBCUrl(devDatabaseType, { localDirectory: './build/h2db/db', databaseName: lowercaseBaseName, skipExtraOptions: true }) %><% } else if (devDatabaseTypeOracle) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: 'xe', skipExtraOptions: true}) %><% } %>"
+            url "<% if (devDatabaseTypePostgres) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: baseName, skipExtraOptions: true }) %> <% } %>"
             username "<% if (devDatabaseTypePostgres) { %><%= baseName %><% } %>"
             password "<%= baseName %>"
             changeLogFile "<%= SERVER_MAIN_RES_DIR %>config/liquibase/master.xml"
@@ -209,11 +209,11 @@ liquibase {
         }
         diffLog {
             driver "<% if (devDatabaseTypePostgres) { %><%= YBDB_DRIVER %><% } %>"
-            url "<% if (devDatabaseTypePostgres) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: baseName, skipExtraOptions: true }) %><% } else if (devDatabaseTypeH2Disk) { %><%- getJDBCUrl(devDatabaseType, { localDirectory: './build/h2db/db', databaseName: lowercaseBaseName, skipExtraOptions: true }) %><% } else if (devDatabaseTypeOracle) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: 'xe', skipExtraOptions: true}) %><% } %>"
+            url "<% if (devDatabaseTypePostgres) { %><%- getJDBCUrl(devDatabaseType, { hostname: 'localhost', databaseName: baseName, skipExtraOptions: true }) %> <% } %>"
             username "<% if (devDatabaseTypePostgres) { %><%= baseName %><% } %>"
             password "<%= baseName %>"
             changeLogFile project.ext.diffChangelogFile
-            referenceUrl "hibernate:spring:<%= packageName %>.domain?dialect=<% if (devDatabaseTypeMysql) { %>org.hibernate.dialect.MySQL8Dialect<% } else if (devDatabaseTypeMariadb) { %>org.hibernate.dialect.MariaDB103Dialect<% } else if (devDatabaseTypePostgres) { %>tech.jhipster.domain.util.FixedPostgreSQL10Dialect<% } else if (devDatabaseTypeH2Disk) { %>org.hibernate.dialect.H2Dialect<% } else if (devDatabaseTypeOracle) { %>org.hibernate.dialect.Oracle12cDialect<% } else if (devDatabaseTypeMssql) { %>org.hibernate.dialect.SQLServer2012Dialect<% } %>&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
+            referenceUrl "hibernate:spring:<%= packageName %>.domain?dialect=<% if (devDatabaseTypePostgres) { %>tech.jhipster.domain.util.FixedPostgreSQL10Dialect<% } %>&hibernate.physical_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy&hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy"
             logLevel "debug"
             classpath "$buildDir/classes/java/main"
   <%_ if (authenticationTypeOauth2) { _%>
@@ -248,12 +248,6 @@ configurations {
             // Inherited version from Spring Boot can't be used because of regressions:
             // To be removed as soon as spring-boot use the same version
             force 'org.liquibase:liquibase-core:<%= LIQUIBASE_VERSION %>'
-<%_ if (devDatabaseTypeH2Any && (prodDatabaseTypeMysql || reactive)) { _%>
-            force 'com.h2database:h2:<%= H2_VERSION %>'
-  <%_ if (reactive) { _%>
-            force 'io.r2dbc:r2dbc-h2:<%= H2_R2DBC_VERSION %>'
-  <%_ } _%>
-<%_ } _%>
         }
     }
 }

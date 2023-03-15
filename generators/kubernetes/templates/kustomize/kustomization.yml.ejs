@@ -33,7 +33,7 @@ const appOut = appName.concat('-', suffix); _%>
     <%_ } _%>
   <%_ } _%>
   <%_ if (!appConfig.serviceDiscoveryType && appConfig.authenticationTypeJwt) { _%>
-- <%= appOut %>/jwt-secret.yml
+- <%= appOut %>/<%= appName %>-jwt-secret.yml
   <%_ } _%>
   <%_ if (monitoringPrometheus) { _%>
 - <%= appOut %>/<%= appName %>-prometheus-sm.yml

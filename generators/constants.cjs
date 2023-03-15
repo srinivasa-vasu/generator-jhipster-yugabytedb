@@ -1,6 +1,6 @@
 const MAIN_DIR = 'src/main/';
 const TEST_DIR = 'src/test/';
-const DOCKER_YB_VERSION = '2.14.1.0-b36';
+const DOCKER_YB_VERSION = '2.16.2.0-b41';
 
 const Types = {
   MONOLITH: 'monolith',
