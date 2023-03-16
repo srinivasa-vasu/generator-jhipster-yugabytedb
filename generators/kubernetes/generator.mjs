@@ -51,7 +51,7 @@ export default class extends KubernetesGenerator {
   _initializing() {
     return {
       setupLocalConsts() {
-        this.DOCKER_YBDB = constants.DOCKER_YBDB;
+        this.YBDB_REL_VERSION = constants.YBDB_REL_VERSION;
         this.KUBERNETES_POLICY_API_VERSION = k8s.KUBERNETES_POLICY_API_VERSION;
         this.KUBERNETES_CORE_API_VERSION = k8s.KUBERNETES_CORE_API_VERSION;
         this.KUBERNETES_STATEFULSET_API_VERSION = k8s.KUBERNETES_STATEFULSET_API_VERSION;

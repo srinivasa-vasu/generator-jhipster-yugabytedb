@@ -20,7 +20,7 @@
 version: '<%= DOCKER_COMPOSE_FORMAT_VERSION %>'
 services:
   <%= baseName.toLowerCase() %>-ybdb:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     #   - ~/volumes/jhipster/<%= baseName %>/ybdb/:/mnt/disk0/i1
     environment:

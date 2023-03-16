@@ -165,6 +165,7 @@ spring:
 <%_ if (reactive) { _%>
   <%_ if (devDatabaseTypePostgres) { _%>
     url: <%- getJDBCUrl(devDatabaseType, { databaseName: baseName, hostname: 'localhost' }) %>
+    driver-class-name: <%= YBDB_DRIVER %>
   <%_ } _%>
 <%_ } _%>
 <%_ if (!skipUserManagement) { _%>

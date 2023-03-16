@@ -1,6 +1,6 @@
 const MAIN_DIR = 'src/main/';
 const TEST_DIR = 'src/test/';
-const DOCKER_YB_VERSION = '2.16.2.0-b41';
+const YB_VERSION = '2.14.7.0-b51';
 
 const Types = {
   MONOLITH: 'monolith',
@@ -28,6 +28,7 @@ const Types = {
   BLUEPRINTS: 'blueprints',
   BUILD_TOOL: 'buildTool',
   CACHE_PROVIDER: 'cacheProvider',
+  NO_CACHE_PROVIDER: 'no',
   CLIENT_FRAMEWORK: 'clientFramework',
   CLIENT_PACKAGE_MANAGER: 'clientPackageManager',
   CLIENT_THEME: 'clientTheme',
@@ -79,6 +80,12 @@ const Types = {
   KAFKA: 'kafka',
   NO: 'no',
   FALSE: false,
+  CAFFEINE: 'caffeine',
+  EHCACHE: 'ehcache',
+  HAZELCAST: 'hazelcast',
+  INFINISPAN: 'infinispan',
+  MEMCACHED: 'memcached',
+  REDIS: 'redis',
 };
 
 const constants = {
@@ -88,7 +95,7 @@ const constants = {
   SERVER_MAIN_RES_DIR: `${MAIN_DIR}resources/`,
   SERVER_TEST_SRC_DIR: `${TEST_DIR}java/`,
   SERVER_TEST_RES_DIR: `${TEST_DIR}resources/`,
-  DOCKER_YBDB: `yugabytedb/yugabyte:${DOCKER_YB_VERSION}`,
+  YBDB_REL_VERSION: `yugabytedb/yugabyte:${YB_VERSION}`,
   YSQL_DRIVER_VERSION: '42.3.4',
   YBDB_DRIVER: 'com.yugabyte.Driver',
   YCQL_DRIVER_VERSION: '4.6.0-yb-10',
@@ -110,6 +117,9 @@ const databaseData = {
     constraintNameMaxLength: 63,
     protocolSuffix: 'yugabytedb://',
     port: ':5433/',
+    r2dbc: {
+      protocolSuffix: 'postgresql://',
+    },
   },
 };
 

@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: <%= KUBERNETES_YB_DSQL %>-init
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         env:
         - name: YSQL_SECRET
           valueFrom:
@@ -88,7 +88,9 @@ spec:
                 do
                   eval echo "$line" >> /tmp/ysql-init-db.sql
                 done < "/config/ysql-init-db.sql"
-                /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password=\'${YSQL_SECRET}\' -f /tmp/ysql-init-db.sql
+                if [ -f "/tmp/ysql-init-db.sql" ]; then
+                  /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password=\'${YSQL_SECRET}\' -f /tmp/ysql-init-db.sql
+                fi
               fi
 
               if [ -f "/config/ycql-init-db.sql" ]; then
@@ -97,7 +99,9 @@ spec:
                 do
                   eval echo "$line" >> /tmp/ycql-init-db.sql
                 done < "/config/ycql-init-db.sql"
-                /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p ${YCQL_SECRET} -f /tmp/ycql-init-db.sql
+                if [ -f "/tmp/ycql-init-db.sql" ]; then
+                  /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p ${YCQL_SECRET} -f /tmp/ycql-init-db.sql
+                fi
               fi
       restartPolicy: OnFailure
       volumes:

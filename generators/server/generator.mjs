@@ -46,7 +46,7 @@ export default class extends ServerGenerator {
   _initializing() {
     return {
       setupLocalServerConsts() {
-        this.DOCKER_YBDB = constants.DOCKER_YBDB;
+        this.YBDB_REL_VERSION = constants.YBDB_REL_VERSION;
         this.YSQL_DRIVER_VERSION = constants.YSQL_DRIVER_VERSION;
         this.YCQL_DRIVER_VERSION = constants.YCQL_DRIVER_VERSION;
         this.YBDB_DRIVER = constants.YBDB_DRIVER;

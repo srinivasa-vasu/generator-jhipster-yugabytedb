@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: <%= app.baseName.toLowerCase() %>-init
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         env:
         <%_ if (app.prodDatabaseTypePostgres) { _%>
         - name: YSQL_SECRET
@@ -90,7 +90,9 @@ spec:
                 do
                   eval echo "$line" >> /tmp/ysql-init-db.sql
                 done < "/config/ysql-init-db.sql"
-                /home/yugabyte/tserver/bin/ysqlsh -U yugabyte password=\'${YSQL_SECRET}\' -h <%= app.baseName.toLowerCase() %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -f /tmp/ysql-init-db.sql
+                if [ -f "/tmp/ysql-init-db.sql" ]; then
+                  /home/yugabyte/tserver/bin/ysqlsh -U yugabyte password=\'${YSQL_SECRET}\' -h <%= app.baseName.toLowerCase() %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -f /tmp/ysql-init-db.sql
+                fi
               fi
 
               if [ -f "/config/ycql-init-db.sql" ]; then
@@ -99,7 +101,9 @@ spec:
                 do
                   eval echo "$line" >> /tmp/ycql-init-db.sql
                 done < "/config/ycql-init-db.sql"
-                /home/yugabyte/tserver/bin/ycqlsh <%= app.baseName.toLowerCase() %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p ${YCQL_SECRET} -f /tmp/ycql-init-db.sql
+                if [ -f "/tmp/ycql-init-db.sql" ]; then
+                  /home/yugabyte/tserver/bin/ycqlsh <%= app.baseName.toLowerCase() %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p ${YCQL_SECRET} -f /tmp/ycql-init-db.sql
+                fi
               fi
       restartPolicy: OnFailure
       volumes:

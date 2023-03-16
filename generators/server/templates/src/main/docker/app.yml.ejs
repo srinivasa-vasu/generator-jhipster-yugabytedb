@@ -87,7 +87,7 @@ _%>
 <%_ } _%>
 <%_ if (prodDatabaseTypePostgres) { _%>
   <%= baseName.toLowerCase() %>-ybdb:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     #   - ~/volumes/jhipster/<%= baseName %>/ybdb/:/var/lib/ybdb/data/
     environment:
@@ -105,7 +105,7 @@ _%>
 <%_ } _%>
 <%_ if (databaseTypeCassandra) { _%>
   <%= baseName.toLowerCase() %>-ybdb:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     # - ~/volumes/jhipster/<%= baseName %>/ybdb/:/mnt/disk0/i1
     environment:

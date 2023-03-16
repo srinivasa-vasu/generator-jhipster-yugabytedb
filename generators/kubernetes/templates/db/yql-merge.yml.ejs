@@ -113,16 +113,16 @@ spec:
 apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
 kind: Service
 metadata:
-  name: <%= app.baseName.toLowerCase() %>-tserver-ui
+  name: <%= KUBERNETES_YB_DSQL %>-tserver-ui
   namespace: <%= kubernetesNamespace %>
   labels:
-    app: <%= app.baseName.toLowerCase() %>-tserver
+    app: <%= KUBERNETES_YB_DSQL %>-tserver
 spec:
   ports:
     - name: "http-ui"
       port: 9000
   selector:
-    app: <%= app.baseName.toLowerCase() %>-tserver
+    app: <%= KUBERNETES_YB_DSQL %>-tserver
   type: ClusterIP
 ---
 apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
@@ -131,7 +131,7 @@ metadata:
   name: <%= KUBERNETES_YB_DSQL %>-vault
   namespace: <%= kubernetesNamespace %>
   labels:
-    app: <%= app.baseName.toLowerCase() %>-vault
+    app: <%= KUBERNETES_YB_DSQL %>-vault
 type: Opaque
 data:
   ysql-secret: <%= Buffer.from(getDBPassword()).toString('base64') %>
@@ -205,7 +205,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: <%= KUBERNETES_YB_DSQL %>-master
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:
@@ -309,7 +309,7 @@ spec:
         - name: <%= KUBERNETES_YB_DSQL %>-master
           mountPath: /mnt/disk0
       - name: <%= KUBERNETES_YB_DSQL %>-yb-cleanup
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         imagePullPolicy: IfNotPresent
         env:
         - name: USER
@@ -385,7 +385,7 @@ spec:
               topologyKey: kubernetes.io/hostname
       containers:
       - name: <%= KUBERNETES_YB_DSQL %>-tserver
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         imagePullPolicy: IfNotPresent
         lifecycle:
           postStart:
@@ -505,6 +505,8 @@ spec:
             --pgsql_proxy_bind_address=0.0.0.0:5433 \
             --cql_proxy_bind_address=$(HOSTNAME).<%= KUBERNETES_YB_DSQL %>-tservers.$(NAMESPACE).svc.cluster.local \
             --ysql_enable_auth=true \
+            --yb_enable_read_committed_isolation=true \
+            --enable_wait_queues=true \
             --use_cassandra_authentication=true
         ports:
         - containerPort: 9000
@@ -523,7 +525,7 @@ spec:
         - name: <%= KUBERNETES_YB_DSQL %>-tserver
           mountPath: /mnt/disk0
       - name: <%= KUBERNETES_YB_DSQL %>-yb-cleanup
-        image: <%= DOCKER_YBDB %>
+        image: <%= YBDB_REL_VERSION %>
         imagePullPolicy: IfNotPresent
         env:
         - name: USER

@@ -108,6 +108,7 @@ public class LiquibaseConfiguration {
             .url(liquibaseProperties.getUrl())
             .username(user)
             .password(password)
+            .driverClassName(liquibaseProperties.getDriverClassName())
             .build();
     }
 

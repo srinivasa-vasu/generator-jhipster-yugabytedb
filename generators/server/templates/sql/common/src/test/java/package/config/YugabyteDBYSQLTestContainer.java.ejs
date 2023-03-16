@@ -41,7 +41,7 @@ public class YugabyteDBYSQLTestContainer implements SqlTestContainer {
     @Override
     public void afterPropertiesSet() {
         if (null == ysqlContainer) {
-            ysqlContainer = new YugabyteDBYSQLContainer("<%= DOCKER_YBDB %>")
+            ysqlContainer = new YugabyteDBYSQLContainer("<%= YBDB_REL_VERSION %>")
                 .withDatabaseName("<%= baseName %>")
                 .withTmpFs(Collections.singletonMap("/testtmpfs", "rw"))
                 .withLogConsumer(new Slf4jLogConsumer(log))

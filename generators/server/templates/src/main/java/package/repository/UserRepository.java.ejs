@@ -157,7 +157,7 @@ import java.time.Instant;
     let listOrFlux = reactive ? 'Flux' : 'List';
     let pageOrFlux = (reactive) ? 'Flux' : 'Page';
 _%>
-<%_ if ((databaseTypeSql && !reactive) || databaseTypeMongodb || databaseTypeNeo4j || databaseTypeCouchbase) { _%>
+<%_ if ((databaseTypeSql && !reactive)) { _%>
 @Repository
 public interface UserRepository extends <% if (databaseTypeSql) { %>JpaRepository<<%= asEntity('User') %>, <%= user.primaryKey.type %>><% } %><% if (reactive && !databaseTypeCouchbase) { %>Reactive<% } %><% if (databaseTypeMongodb) { %>MongoRepository<<%= asEntity('User') %>, String><% } %><% if (databaseTypeNeo4j) { %>Neo4jRepository<<%= asEntity('User') %>, String><% } %><% if (databaseTypeCouchbase) { %>JHipsterCouchbaseRepository<<%= asEntity('User') %>, String><% } %><% if (searchEngineCouchbase) { %>, CouchbaseSearchRepository<<%= asEntity('User') %>, String><% } %> {
   <%_ if (cacheManagerIsAvailable) { _%>

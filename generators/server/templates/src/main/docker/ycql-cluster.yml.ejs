@@ -23,7 +23,7 @@ networks:
     name: ybdb
 services:
   <%= baseName.toLowerCase() %>-ybdb:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     #   - ~/volumes/jhipster/<%= baseName %>/ybdb/:/mnt/disk0/i1
     environment:
@@ -47,7 +47,7 @@ services:
     - ../resources/config/ycql:/ycql/script:ro
     command: bin/yugabyted start --base_dir=/mnt/disk0/i1 --initial_scripts_dir=/ycql/script/ --tserver_flags="enable_ysql=false" --master_flags="enable_ysql=false" --listen=<%= baseName.toLowerCase() %>-ybdb --background=false
   <%= baseName.toLowerCase() %>-ybdb-i2:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     #   - ~/volumes/jhipster/<%= baseName %>/ybdb/:/mnt/disk0/i2
     deploy:
@@ -62,7 +62,7 @@ services:
     - ../resources/config/cql:/cql:ro
     command: bin/yugabyted start --base_dir=/mnt/disk0/i2 --tserver_flags="enable_ysql=false" --master_flags="enable_ysql=false" --background=false --listen=<%= baseName.toLowerCase() %>-ybdb-i2 --join=<%= baseName.toLowerCase() %>-ybdb
   <%= baseName.toLowerCase() %>-ybdb-i3:
-    image: <%= DOCKER_YBDB %>
+    image: <%= YBDB_REL_VERSION %>
     # volumes:
     #   - ~/volumes/jhipster/<%= baseName %>/ybdb/:/mnt/disk0/i3
     deploy:
