@@ -79,7 +79,7 @@ spec:
               # update the default creds
               echo "Updating the default YSQL password"
               /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password='yugabyte' -c "ALTER USER yugabyte PASSWORD '${YSQL_SECRET}';" \
-                && echo "YSQL password updated successfully" || { echo "YSQL password update failed"; exit 1 }
+                && echo "YSQL password updated successfully" || { echo "YSQL password update failed"; exit 1; }
               echo "Updating the default YCQL password"
               /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p 'cassandra' -e "ALTER ROLE cassandra WITH PASSWORD = '${YCQL_SECRET}';"
 
