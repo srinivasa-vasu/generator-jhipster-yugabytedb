@@ -71,7 +71,7 @@ spec:
       port: 7000
   selector:
     app: <%= KUBERNETES_YB_DSQL %>-master
-  type: ClusterIP
+  type: LoadBalancer
 ---
 apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
 kind: Service
@@ -505,8 +505,6 @@ spec:
             --pgsql_proxy_bind_address=0.0.0.0:5433 \
             --cql_proxy_bind_address=$(HOSTNAME).<%= KUBERNETES_YB_DSQL %>-tservers.$(NAMESPACE).svc.cluster.local \
             --ysql_enable_auth=true \
-            --yb_enable_read_committed_isolation=true \
-            --enable_wait_queues=true \
             --use_cassandra_authentication=true
         ports:
         - containerPort: 9000

@@ -78,7 +78,8 @@ spec:
               done
               # update the default creds
               echo "Updating the default YSQL password"
-              /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password='yugabyte' -c "ALTER USER yugabyte PASSWORD '${YSQL_SECRET}';"
+              /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password='yugabyte' -c "ALTER USER yugabyte PASSWORD '${YSQL_SECRET}';" \
+                && echo "YSQL password updated successfully" || { echo "YSQL password update failed"; exit 1 }
               echo "Updating the default YCQL password"
               /home/yugabyte/tserver/bin/ycqlsh <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -u cassandra -p 'cassandra' -e "ALTER ROLE cassandra WITH PASSWORD = '${YCQL_SECRET}';"
 
@@ -89,7 +90,13 @@ spec:
                   eval echo "$line" >> /tmp/ysql-init-db.sql
                 done < "/config/ysql-init-db.sql"
                 if [ -f "/tmp/ysql-init-db.sql" ]; then
-                  /home/yugabyte/tserver/bin/ysqlsh -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password=\'${YSQL_SECRET}\' -f /tmp/ysql-init-db.sql
+                  /home/yugabyte/tserver/bin/ysqlsh --set ON_ERROR_STOP=on -h <%= KUBERNETES_YB_DSQL %>-<%= KUBERNETES_YB_DSQL_EP_SUFFIX %> -U yugabyte password=\'${YSQL_SECRET}\' -f /tmp/ysql-init-db.sql
+                  if [ $? -ne 0 ]; then
+                    echo "YSQL DB Objects creation failed"
+                    exit 1
+                  else
+                    echo "YSQL DB Objects created successfully"
+                  fi
                 fi
               fi
 
@@ -108,4 +115,4 @@ spec:
         - name: config
           configMap:
             name: <%= KUBERNETES_YB_DSQL %>-cm
-  backoffLimit: 3
+  backoffLimit: 6
