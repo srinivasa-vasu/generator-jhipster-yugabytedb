@@ -71,7 +71,7 @@ spec:
       port: 7000
   selector:
     app: <%= app.baseName.toLowerCase() %>-master
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: <%= KUBERNETES_CORE_API_VERSION %>
 kind: Service

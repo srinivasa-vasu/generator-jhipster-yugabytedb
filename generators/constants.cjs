@@ -99,7 +99,7 @@ const constants = {
   YSQL_DRIVER_VERSION: '42.3.4',
   YBDB_DRIVER: 'com.yugabyte.Driver',
   YCQL_DRIVER_VERSION: '4.6.0-yb-10',
-  YBDB_VERSION: '1.0.0',
+  YBDB_VERSION: '1.0.2',
   YBDB_TC: '1.17.6',
 };
 
