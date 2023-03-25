@@ -17,7 +17,6 @@ ${chalk.magentaBright.dim('                        ██║  ██║███
 ${chalk.magentaBright.dim('                        ██║  ██║╚════██║██║▄▄ ██║██║     ')}
 ${chalk.magentaBright.dim('                        ██████╔╝███████║╚██████╔╝███████╗')}
 ${chalk.magentaBright.dim('                        ╚═════╝ ╚══════╝ ╚══▀▀═╝ ╚══════╝')}
-${chalk.white.bold('                         https://www.jhipster.tech')}
 ${chalk.greenBright.bold('                         https://www.yugabyte.com/\n')}
 ${chalk.white(` Welcome to YugabyteDB Distributed SQL :: Running YugabyteDB v${chalk.white.bold(YBDB_VERSION)} generator`)}
 ${chalk.white(' This blueprint generates Jhispter project with YugabyteDB distributed SQL.')}
