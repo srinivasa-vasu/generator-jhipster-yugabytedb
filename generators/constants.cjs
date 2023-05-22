@@ -1,6 +1,6 @@
 const MAIN_DIR = 'src/main/';
 const TEST_DIR = 'src/test/';
-const YB_VERSION = '2.14.7.0-b51';
+const YB_VERSION = '2.14.9.0-b23';
 
 const Types = {
   MONOLITH: 'monolith',
@@ -86,6 +86,11 @@ const Types = {
   INFINISPAN: 'infinispan',
   MEMCACHED: 'memcached',
   REDIS: 'redis',
+  ANGULAR_X: 'angularX',
+  ANGULAR: 'angular',
+  REACT: 'react',
+  VUE: 'vue',
+  SVELTE: 'svelte'
 };
 
 const constants = {
@@ -96,10 +101,10 @@ const constants = {
   SERVER_TEST_SRC_DIR: `${TEST_DIR}java/`,
   SERVER_TEST_RES_DIR: `${TEST_DIR}resources/`,
   YBDB_REL_VERSION: `yugabytedb/yugabyte:${YB_VERSION}`,
-  YSQL_DRIVER_VERSION: '42.3.4',
+  YSQL_DRIVER_VERSION: '42.3.5-yb-3',
   YBDB_DRIVER: 'com.yugabyte.Driver',
-  YCQL_DRIVER_VERSION: '4.6.0-yb-10',
-  YBDB_VERSION: '1.0.3',
+  YCQL_DRIVER_VERSION: '4.6.0-yb-12',
+  YBDB_VERSION: '1.0.4',
   YBDB_TC: '1.17.6',
 };
 
