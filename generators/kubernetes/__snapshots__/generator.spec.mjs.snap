@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SubGenerator kubernetes of yugabytedb JHipster blueprint micro should succeed 1`] = `
+Object {
+  ".yo-rc.json": Object {
+    "stateCleared": "modified",
+  },
+  "kubectl-apply.sh": Object {
+    "stateCleared": "modified",
+  },
+  "kustomization.yml": Object {
+    "stateCleared": "modified",
+  },
+  "namespace.yml": Object {
+    "stateCleared": "modified",
+  },
+  "skaffold.yml": Object {
+    "stateCleared": "modified",
+  },
+}
+`;
+
+exports[`SubGenerator kubernetes of yugabytedb JHipster blueprint mono should succeed 1`] = `
+Object {
+  ".yo-rc.json": Object {
+    "stateCleared": "modified",
+  },
+  "kubectl-apply.sh": Object {
+    "stateCleared": "modified",
+  },
+  "kustomization.yml": Object {
+    "stateCleared": "modified",
+  },
+  "namespace.yml": Object {
+    "stateCleared": "modified",
+  },
+  "skaffold.yml": Object {
+    "stateCleared": "modified",
+  },
+}
+`;

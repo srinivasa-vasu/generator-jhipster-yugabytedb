@@ -63,6 +63,9 @@ export default class extends ServerGenerator {
           // do nothing
         }
       },
+      // overrideFakeProps() {
+      //   this.skipFakeData = false; // set it to false if production
+      // },
     };
   }
 

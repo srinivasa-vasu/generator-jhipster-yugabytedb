@@ -26,7 +26,7 @@
 
 <%_ const isAutoIncrementDB = reactive || prodDatabaseTypeMysql; _%>
 <%_ if (!isAutoIncrementDB) { _%>
-    <changeSet id="00000000000000" author="jhipster">
+    <changeSet id="00000000000000" author="jhipster" <% if (reactive) { %> runInTransaction="false" <% } %>>
         <createSequence sequenceName="sequence_generator" startValue="1050" incrementBy="50"/>
     </changeSet>
 <%_ } _%>
@@ -35,7 +35,7 @@
         JHipster core tables.
         The initial schema has the '00000000000001' id, so that it is over-written if we re-generate it.
     -->
-    <changeSet id="00000000000001" author="jhipster">
+    <changeSet id="00000000000001" author="jhipster" <% if (reactive) { %> runInTransaction="false" <% } %>>
 <%_ if (!skipUserManagement || authenticationTypeOauth2) {
         const idField = user.primaryKey.fields[0];
 _%>
@@ -164,7 +164,7 @@ _%>
 <%_ } _%>
     </changeSet>
 
-    <changeSet author="jhipster" id="00000000000002" context="test">
+    <changeSet author="jhipster" id="00000000000002" context="test" <% if (reactive) { %> runInTransaction="false" <% } %>>
         <createTable tableName="<%= jhiTablePrefix %>_date_time_wrapper">
             <column <% if (isAutoIncrementDB) { _%> autoIncrement="true" <%_ } %> name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="<%= jhiTablePrefix %>_date_time_wrapperPK"/>

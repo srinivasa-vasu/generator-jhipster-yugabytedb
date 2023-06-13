@@ -120,7 +120,7 @@ spring:
 <%_ if (databaseTypeSql) { _%>
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
-    contexts: prod
+    contexts: prod<% if (!skipFakeData) { %>, faker<% } %>
   <%_ if (reactive) { _%>
     <%_ if (prodDatabaseTypePostgres) { _%>
     url: <%- getJDBCUrl(prodDatabaseType, { databaseName: baseName, hostname: 'localhost' }) %>

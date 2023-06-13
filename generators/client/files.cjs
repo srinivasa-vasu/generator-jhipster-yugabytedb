@@ -114,7 +114,13 @@ function postWriteUpdates() {
           content.replace('logo-jhipster.png', 'ybdb_logo.svg')
         );
         this.editFile('src/main/webapp/app/modules/home/home.scss', content =>
+          content.replace('jhipster_family_member_1.svg', 'yugabytedb-header.svg')
+        );
+        this.editFile('src/main/webapp/app/modules/home/home.scss', content =>
           content.replace('jhipster_family_member_2.svg', 'yugabytedb-header.svg')
+        );
+        this.editFile('src/main/webapp/app/modules/home/home.scss', content =>
+          content.replace('jhipster_family_member_3.svg', 'yugabytedb-header.svg')
         );
       } else if (this.jhipsterConfig.clientFramework === ANGULAR || this.jhipsterConfig.clientFramework === ANGULAR_X) {
 
