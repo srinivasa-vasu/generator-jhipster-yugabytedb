@@ -504,6 +504,9 @@ spec:
             --enable_ysql=true \
             --pgsql_proxy_bind_address=0.0.0.0:5433 \
             --cql_proxy_bind_address=$(HOSTNAME).<%= KUBERNETES_YB_DSQL %>-tservers.$(NAMESPACE).svc.cluster.local \
+            --ysql_sequence_cache_method=server \
+            --ysql_enable_read_request_caching=true \
+            --ysql_catalog_preload_additional_tables=true \
             --ysql_enable_auth=true \
             --use_cassandra_authentication=true
         ports:

@@ -496,6 +496,9 @@ spec:
             --enable_ysql=true \
             --pgsql_proxy_bind_address=0.0.0.0:5433 \
             --cql_proxy_bind_address=$(HOSTNAME).<%= app.baseName.toLowerCase() %>-tservers.$(NAMESPACE).svc.cluster.local \
+            --ysql_sequence_cache_method=server \
+            --ysql_enable_read_request_caching=true \
+            --ysql_catalog_preload_additional_tables=true \
             <%_ if (app.prodDatabaseTypePostgres) { _%>
             --ysql_enable_auth=true \
             <%_ } else if (app.databaseTypeCassandra) { _%>

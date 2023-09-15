@@ -1,6 +1,6 @@
 const MAIN_DIR = 'src/main/';
 const TEST_DIR = 'src/test/';
-const YB_VERSION = '2.18.0.1-b4';
+const YB_VERSION = '2.18.2.1-b1';
 
 const Types = {
   MONOLITH: 'monolith',

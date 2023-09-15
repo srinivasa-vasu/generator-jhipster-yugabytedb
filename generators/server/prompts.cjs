@@ -176,12 +176,12 @@ async function askForServerSideOpts() {
     {
       type: 'list',
       name: DATABASE_TYPE,
-      message: `Which ${chalk.yellow('*type*')} of database would you like to use?`,
+      message: `Which ${chalk.yellow('*api*')} of distributed SQL would you like to use?`,
       choices: props => {
         const opts = [];
         opts.push({
           value: POSTGRESQL,
-          name: 'YSQL (PostgreSQL)',
+          name: 'YSQL (Distributed PostgreSQL)',
         });
         if (props.authenticationType !== OAUTH2) {
           opts.push({

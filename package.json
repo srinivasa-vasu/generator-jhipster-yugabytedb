@@ -1,12 +1,13 @@
 {
   "name": "generator-jhipster-yugabytedb",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Jhipster blueprint generator that adds YugabyteDB (distributed SQL) support. You can use this generator as `jhipster --blueprints yugabytedb`",
   "keywords": [
     "yeoman-generator",
     "jhipster-blueprint",
     "jhipster-7",
     "yugabytedb",
+    "ybdb",
     "distributedsql"
   ],
   "homepage": "https://github.com/srinivasa-vasu/generator-jhipster-yugabytedb",
@@ -45,11 +46,11 @@
   },
   "dependencies": {
     "chalk": "4.1.2",
-    "generator-jhipster": "7.9.3"
+    "generator-jhipster": "7.9.4"
   },
   "devDependencies": {
     "ejs-lint": "1.2.2",
-    "eslint": "8.21.0",
+    "eslint": "8.23.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-import": "2.26.0",
